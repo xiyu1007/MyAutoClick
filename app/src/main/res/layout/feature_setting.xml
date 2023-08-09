@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/settLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <!-- 标题栏 -->
+    <LinearLayout
+        android:id="@+id/titleLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="@color/white"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="点击编辑参数"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginBottom="10dp"
+            />
+
+        <TextView
+            android:id="@+id/junior_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="通用设置"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:layout_marginBottom="5dp"
+            android:onClick="foldSetting"/>
+
+        <!-- 折叠内容 -->
+        <LinearLayout
+            android:id="@+id/junior_setting_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="2dp"
+                android:text="延迟"
+                android:textSize="18sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginBottom="2dp"
+                android:text="延迟多久进行下次点击"
+                android:textSize="16sp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:layout_marginBottom="3dp"
+                android:visibility="visible">
+
+                <EditText
+                    android:id="@+id/data_delay"
+                    android:layout_width="250dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/edittext_underline_selector"
+                    android:editable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="20"
+                    android:inputType="number"
+                    android:textColorHint="@android:color/darker_gray"
+                    android:textSize="16sp"
+                    tools:ignore="Deprecated" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:text="MS"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+            <!--            android:onClickListener="onEditTextClick"-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="2dp"
+                android:text="触摸时长"
+                android:textSize="18sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginBottom="2dp"
+                android:text="每次模拟点击触摸屏幕的时长(按下到抬起)，太短导致部分应用点击无效"
+                android:textSize="16sp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="3dp"
+                android:layout_marginBottom="3dp"
+                android:visibility="visible">
+                <EditText
+                    android:id="@+id/data_keep_time"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:hint="10"
+                    android:textSize="16sp"
+                    android:textColorHint="@android:color/darker_gray"
+                    android:background="@drawable/edittext_underline_selector"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:editable="true"
+                    tools:ignore="Deprecated" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:textColor="@android:color/black"
+                    android:text="MS"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+            <!--            android:onClickListener="onEditTextClick"-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:textColor="@android:color/black"
+                android:text="重复次数"
+                android:textSize="18sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:textColor="@android:color/darker_gray"
+                android:text="本次点击重复次数，必须大于0"
+                android:textSize="16sp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="3dp"
+                android:layout_marginBottom="3dp"
+                android:visibility="visible">
+                <EditText
+                    android:id="@+id/data_repeat_times"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:inputType="number"
+                    android:hint="1"
+                    android:textSize="16sp"
+                    android:textColorHint="@android:color/darker_gray"
+                    android:background="@drawable/edittext_underline_selector"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:editable="true"
+                    tools:ignore="Deprecated" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:textColor="@android:color/black"
+                    android:text="次"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+            <!--            android:onClickListener="onEditTextClick"-->
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/senior_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="高级设置"
+            android:textColor="@color/black"
+            android:layout_marginBottom="5dp"
+            android:textSize="18sp"
+            android:onClick="foldSetting"/>
+
+        <!-- 折叠内容 -->
+        <LinearLayout
+            android:id="@+id/senior_setting_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:textColor="@android:color/black"
+                android:text="类型"
+                android:textSize="18sp"/>
+            <TextView
+                android:id="@+id/data_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:textColor="@android:color/darker_gray"
+                android:text="点击"
+                android:clickable="true"
+                android:textSize="18sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:textColor="@android:color/black"
+                android:text="点击位置随机距离"
+                android:textSize="18sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:textColor="@android:color/darker_gray"
+                android:text="点击位置随机偏移距离，反检测"
+                android:textSize="16sp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="3dp"
+                android:layout_marginBottom="3dp"
+                android:visibility="visible">
+
+                <EditText
+                    android:id="@+id/data_diameter"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edittext_underline_selector"
+                    android:inputType="number"
+                    android:editable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="0~50(靶径为50dp)"
+                    android:textColorHint="@android:color/darker_gray"
+                    android:textSize="16sp"
+                    tools:ignore="Deprecated" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:textColor="@android:color/black"
+                    android:text="dp"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+            <!--            android:onClickListener="onEditTextClick"-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="2dp"
+                android:text="随机延迟"
+                android:textSize="18sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:textColor="@android:color/darker_gray"
+                android:text="在延迟参数上随机延迟时长范围，防止检测"
+                android:textSize="16sp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="3dp"
+                android:layout_marginBottom="3dp"
+                android:visibility="visible">
+                <EditText
+                    android:id="@+id/data_random_delay"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:hint="0"
+                    android:textSize="16sp"
+                    android:textColorHint="@android:color/darker_gray"
+                    android:background="@drawable/edittext_underline_selector"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:editable="true"
+                    tools:ignore="Deprecated" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:textColor="@android:color/black"
+                    android:text="MS"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+            <!--            android:onClickListener="onEditTextClick"-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:text="定时"
+                android:textSize="18sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/darker_gray"
+                android:text="设置什么时候开始点击"
+                android:textSize="16sp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="3dp"
+                android:layout_marginBottom="3dp"
+                android:visibility="visible">
+                <TextView
+                    android:id="@+id/data_timed"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:background="@drawable/edittext_underline"
+                    android:layout_marginStart="3dp"
+                    android:clickable="true"
+                    android:text="00:00:00"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"
+                    android:text="S"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+            <!--            android:onClickListener="onEditTextClick"-->
+            <Button
+                android:id="@+id/delete_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:clickable="true"
+                android:text="删除"
+                android:textSize="18sp"/>
+            <!--            android:background="@drawable/button_background"-->
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
+            android:visibility="invisible" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="visible">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.8"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/green"
+                android:background="@drawable/button_background_2"
+                android:text="取消"
+                android:textSize="16sp"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1"
+                android:visibility="invisible" />
+            <TextView
+                android:id="@+id/save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/green"
+                android:background="@drawable/button_background_2"
+                android:text="保存"
+                android:textSize="16sp"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.05"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,29 @@
+<!-- res/layout/floating_icon_layout.xml -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    >
+
+    <ImageView
+        android:id="@+id/floating_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/aim3"
+        android:gravity="center"
+        />
+
+
+    <TextView
+        android:id="@+id/number_text"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center|center"
+        android:background="@drawable/aim_background"
+        android:text="@string/icon_id"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:visibility="visible"
+        android:gravity="center"
+        android:contentDescription="@string/floating_icon" />
+</FrameLayout>

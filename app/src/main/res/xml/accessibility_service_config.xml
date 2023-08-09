@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeViewClicked|typeViewLongClicked"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagDefault"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/description"
+    android:notificationTimeout="1000"
+    android:packageNames="" />
+
+
+<!--    typeViewClicked：当用户点击了一个视图元素时触发。-->
+<!--    typeViewFocused：当视图元素获得焦点时触发。-->
+<!--    typeViewLongClicked：当用户长按一个视图元素时触发。-->
+<!--    typeViewSelected：当视图元素被选择时触发。-->
+<!--    typeViewTextChanged：当视图元素的文本内容发生变化时触发。-->
+<!--    typeWindowStateChanged：当窗口的状态发生变化时触发，例如窗口打开或关闭。-->
+<!--    typeWindowContentChanged：当窗口的内容发生变化时触发，例如文本、图像等内容的改变。-->
+<!--    typeViewAccessibilityFocused：当视图元素获得无障碍焦点时触发。-->
+<!--    typeViewAccessibilityFocusCleared：当视图元素失去无障碍焦点时触发。-->
+<!--    typeViewContextClicked：当用户点击一个视图元素以获取上下文信息时触发。-->

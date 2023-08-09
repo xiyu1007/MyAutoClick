@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Yu</string>
+    <string name="description">获取无障碍权限来实现自动点击，获取源码请到：https://github.com/xiyu1007</string>
+    <string name="icon_id">0</string>
+    <string name="floating_icon">Floating Icon</string>
+
+    <string name="add_button">Add_button</string>
+    <string name="delete_button">Delete_button</string>
+    <string name="setting_button">Setting_button</string>
+</resources>

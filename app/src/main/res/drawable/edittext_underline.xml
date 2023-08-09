@@ -1,0 +1,12 @@
+<!-- res/drawable/edittext_underline.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:top="18sp">
+        <shape android:shape="line">
+            <solid android:color="@android:color/transparent" />
+            <stroke
+                android:width="1dp"
+                android:color="@color/laurel_green" />
+        </shape>
+    </item>
+</layer-list>

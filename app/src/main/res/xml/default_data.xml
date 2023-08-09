@@ -1,0 +1,19 @@
+<!-- res/xml/default_data.xml -->
+<data>
+    <!-- data_1_50 -->
+    <item name="delay" value="20"/>
+    <item name="keepTime" value="10"/>
+    <item name="repeatTimes" value="1"/>
+    <item name="type" value="点击"/>
+    <item name="diameter" value="0"/>
+    <item name="randomDelay" value="0"/>
+    <item name="timed" value="00:00:00"/>
+    <!-- data_1_20 -->
+    <item name="delay" value="50"/>
+    <item name="repeatTimes" value="20"/>
+    <item name="repeatTimes" value="1"/>
+    <item name="type" value="点击"/>
+    <item name="diameter" value="0"/>
+    <item name="randomDelay" value="0"/>
+    <item name="timed" value="00:00:00"/>
+</data>

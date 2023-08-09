@@ -1,0 +1,38 @@
+<resources>
+    <string name="Init_Status">False</string>
+
+    <string-array name="Default_Data">
+        <!-- 延迟 -->
+        <item>20</item>
+        <!-- 触摸时长 -->
+        <item>20</item>
+        <!-- 重复次数 -->
+        <item>0</item>
+        <!-- 类型 -->
+        <item>点击</item>
+        <!-- 随机距离 -->
+        <item>0</item>
+        <!-- 随机延迟 -->
+        <item>0</item>
+        <!-- 定时 -->
+        <item>00:00:00</item>
+    </string-array>
+
+
+    <!-- API 配置 -->
+    <string name="api_base_url">https://github.com/xiyu1007</string>
+    <string name="api_key">YOUR_API_KEY_HERE</string>
+
+    <!-- 其他配置 -->
+    <bool name="debug_mode">true</bool>
+    <integer name="default_timeout">15000</integer>
+
+    <!-- 用户首选项 -->
+    <string name="user_name">xiaoxi</string>
+    <string name="user_email">2983166962@qq.com</string>
+
+
+    <!-- 其他数据 -->
+    <!-- ... -->
+
+</resources>
