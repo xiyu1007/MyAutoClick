@@ -37,6 +37,15 @@
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="60dp"
             tools:layout_editor_absoluteY="178dp" />
+        <Button
+            android:id="@+id/begin_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onDelButtonClicked"
+            android:text="@string/begin_button"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="60dp"
+            tools:layout_editor_absoluteY="200dp" />
 
         <Button
             android:id="@+id/setting_button"

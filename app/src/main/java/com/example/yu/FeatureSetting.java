@@ -72,7 +72,7 @@ public class FeatureSetting extends Service {
         context = getApplicationContext();
         setView();
         initializeViews(floatingView);
-        periordataWatcher = MyApplication.getConveryDataWatcher();
+        periordataWatcher = MyApplication.getconveydatawatcher();
         setData(periordataWatcher);
 
         // 添加触摸监听器

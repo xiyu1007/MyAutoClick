@@ -3,16 +3,11 @@ package com.example.yu;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
+import android.net.Uri;
+import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -77,7 +72,6 @@ public class MyApplication extends Application {
             public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
                 // 将异常信息写入日志文件
 
-
                 WriteToLog.writeLogToFile(myApplication ,throwable.getMessage(),true);
                 // 在这里您可以添加其他处理逻辑，例如重启应用或显示错误界面
                 // 在这里执行其他处理逻辑，例如发送崩溃报告
@@ -91,7 +85,7 @@ public class MyApplication extends Application {
 //                }, 2000); // 延迟 2 秒钟
 
                 // 最后，让系统默认的异常处理器处理异常
-                Objects.requireNonNull(Thread.getDefaultUncaughtExceptionHandler()).uncaughtException(thread, throwable);
+                //Objects.requireNonNull(Thread.getDefaultUncaughtExceptionHandler()).uncaughtException(thread, throwable);
             }
         });
 
@@ -103,7 +97,7 @@ public class MyApplication extends Application {
         // Initialize the UserData instance here
     }
 
-    public static DataWatcher getConveryDataWatcher() {
+    public static DataWatcher getconveydatawatcher() {
         return converyDataWatcher;
     }
 
@@ -113,4 +107,7 @@ public class MyApplication extends Application {
     public static MyApplication getMyApplication(){
         return myApplication;
     }
+
+
+
 }

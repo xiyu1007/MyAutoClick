@@ -173,7 +173,7 @@ public class FileHelper {
                     //ShowToast.show(context, fileName+"创建失败");
                 }
             } else {
-                Log.i("FileHelper", fileName+"文件已存在：" + fileName);
+                //Log.i("FileHelper", fileName+"文件已存在：" + fileName);
                 //ShowToast.show(context, fileName+"文件已存在");
 
             }

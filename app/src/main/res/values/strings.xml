@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Yu</string>
     <string name="description">获取无障碍权限来实现自动点击，获取源码请到：https://github.com/xiyu1007</string>
@@ -6,5 +7,6 @@
 
     <string name="add_button">Add_button</string>
     <string name="delete_button">Delete_button</string>
+    <string name="begin_button">Begin_button</string>
     <string name="setting_button">Setting_button</string>
 </resources>

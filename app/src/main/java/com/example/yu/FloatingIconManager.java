@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -175,7 +174,7 @@ public class FloatingIconManager extends AppCompatActivity {
                 if (extras != null) {
                     int intValue = extras.getInt(MyApplication.MESSAGE_HAD_SET_VIEW);
                     if (intValue == MyApplication.StatusOK) {
-                        boolean status = floatingIcons.get(MyApplication.WHICH_ICON -1).updateAttributes(MyApplication.getConveryDataWatcher());
+                        boolean status = floatingIcons.get(MyApplication.WHICH_ICON -1).updateAttributes(MyApplication.getconveydatawatcher());
                         floatingIcons.get(MyApplication.WHICH_ICON -1).dataWatcher.printAttributes(TAG);
                         if (status){
                             WriteToLog.writeLogToFile(context,TAG+"修改浮窗属性成功",false);
