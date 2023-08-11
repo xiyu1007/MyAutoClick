@@ -1,18 +1,22 @@
 package com.example.yu;
 
 import android.annotation.SuppressLint;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +24,7 @@ import java.util.List;
 /**
  * @author ASUS
  */
-public class FloatingIconManager extends AppCompatActivity {
+public class FloatingIconManager extends Service {
 
     private static final int MAX_FLOATING_ICONS = 5;
     private final Context context;
@@ -35,15 +39,18 @@ public class FloatingIconManager extends AppCompatActivity {
     private final String TAG =  "FloatingIconManager";
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
-    public FloatingIconManager(Context context) {
-        this.context = context;
+    public  FloatingIconManager() {
+        this.context = MyApplication.context;
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+
+        //TODO 广播接收Feature Setting
         //广播
         IntentFilter filter = new IntentFilter();
         filter.addAction(MyApplication.ACTION_ICON_SETTING_START);
         filter.addAction(MyApplication.ACTION_FEATURE_SETTING_STOPPED);
         // 可以继续添加其他动作
         context.registerReceiver(featureSettingReceiver, filter);
+        addFloatingIcon();
 
     }
 
@@ -60,6 +67,8 @@ public class FloatingIconManager extends AppCompatActivity {
 
         if(floatingIcon.dataWatcher == null){
             ShowToast.show(context,"空");
+            Log.d(TAG,"获取到空属性图标");
+            WriteToLog.writeLogToFile(context,"获取到空属性图标",true);
             return;
         }
 
@@ -74,8 +83,6 @@ public class FloatingIconManager extends AppCompatActivity {
         windowManager.addView(floatingView, params);
         floatingViews.add(floatingView);
         floatingIcons.add(floatingIcon);
-        MyApplication.windowManager = windowManager;
-        MyApplication.floatingIcon = floatingIcon;
 
         // 设置悬浮图标的拖动功能
         floatingView.setOnTouchListener(new View.OnTouchListener() {
@@ -108,12 +115,27 @@ public class FloatingIconManager extends AppCompatActivity {
                         params.x = initialX + deltaX;
                         params.y = initialY + deltaY;
 
+                        MyApplication.pritfLine();
+
                         // 更新悬浮图标的显示位置
-                        Log.d(TAG,"X"+params.x+"Y"+params.y);
+
+
                         windowManager.updateViewLayout(floatingView, params);
                         floatingIcon.setParams(params);
-                        MyApplication.windowManager = windowManager;
-                        MyApplication.floatingIcon = floatingIcon;
+
+                        Rect rect = new Rect();
+                        floatingIcon.getView().getGlobalVisibleRect(rect);
+
+                        Log.d(TAG,"X:"+floatingIcon.getParams().x+"  Y:"+floatingIcon.getView().getWidth());
+
+
+                        int left = rect.left;
+                        int top = rect.top;
+                        int right = rect.right;
+                        int bottom = rect.bottom;
+
+                        Log.d(TAG,"left:"+left+"  right:"+right);
+                        Log.d(TAG,"top:"+top+"  bottom:"+bottom);
 
                         // 判断是否移动过
                         if (Math.abs(deltaX) > lofi_data || Math.abs(deltaY) > lofi_data) {
@@ -173,6 +195,8 @@ public class FloatingIconManager extends AppCompatActivity {
         Intent startService = new Intent(context, FeatureSetting.class);
         context.startService(startService);
     }
+
+
     private final BroadcastReceiver featureSettingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -202,10 +226,16 @@ public class FloatingIconManager extends AppCompatActivity {
     };
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         // 注销广播接收器
         unregisterReceiver(featureSettingReceiver);
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     public void stopFeatureSettingService() {

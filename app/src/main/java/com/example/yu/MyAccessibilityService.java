@@ -45,11 +45,13 @@ public class MyAccessibilityService extends AccessibilityService implements Acce
             }
         } else if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED) {
             if (event.getPackageName() != null && event.getPackageName().equals(PACKAGENAME)) {
-                Log.i(TAG,"TYPE_VIEW_CLICKED");
-                simulateClick(400,100);
                 MyApplication.pritfLine();
+                Log.i(TAG,"TYPE_VIEW_CLICKED");
+//                simulateClick(400,100);
+                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+                printRootNodeInfo(rootNode);
+                printChildNodeInfo(rootNode);
             }
-
         }
     }
     private void simulateClick(int x, int y) {

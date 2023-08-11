@@ -67,13 +67,17 @@
             android:permission="android.permission.SYSTEM_ALERT_WINDOW"
             tools:ignore="Instantiatable"/>
 
-        <!-- 添加FloatingIconService -->
         <service
             android:name=".FloatingIconManager"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.SYSTEM_ALERT_WINDOW"
-
+            tools:ignore="Instantiatable" />
+        <service
+            android:name=".FloatingIconFactory"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.SYSTEM_ALERT_WINDOW"
             tools:ignore="Instantiatable" />
 
         <service

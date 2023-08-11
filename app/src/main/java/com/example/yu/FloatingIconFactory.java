@@ -1,12 +1,17 @@
 package com.example.yu;
 
+import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.WindowManager;
 
+import androidx.annotation.Nullable;
+
 import java.util.List;
 
-public class FloatingIconFactory {
+public class FloatingIconFactory  extends Service {
 
     public static List<DataWatcher> dataWatcherList = null;
     private static DataWatcher defaultDataWatcher;
@@ -50,5 +55,11 @@ public class FloatingIconFactory {
 
     public static DataWatcher getDefaultDataWatcher(){
         return defaultDataWatcher;
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 }

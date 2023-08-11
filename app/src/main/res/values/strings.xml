@@ -20,6 +20,7 @@
     <string name="setting_button">Setting_button</string>
     <string name="float_bar_description">悬浮窗</string>
     <string name="aim_description">图标</string>
+    <string name="aim_img">aim_img</string>
 </resources>
 
 <!--<string name="label">定时点击器</string>  显示的名称-->

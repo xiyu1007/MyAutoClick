@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,11 +28,16 @@ public class FloatingIcon implements View.OnTouchListener {
     private  WindowManager.LayoutParams params;
 
     private final Context context;
+    private final String TAG = "FloatingIcon";
 
+    @SuppressLint("RtlHardcoded")
     public FloatingIcon(Context context) {
         this.context = context;
+
         this.floatingView = LayoutInflater.from(context).inflate(R.layout.floating_icon_layout, null);
         // 查找TextView并设置其文本
+
+        TextView textView = floatingView.findViewById(R.id.number_text);
         setNumber();
 
         this.params = new WindowManager.LayoutParams(
@@ -44,8 +52,28 @@ public class FloatingIcon implements View.OnTouchListener {
                 PixelFormat.TRANSLUCENT
                 // 设置窗口背景为透明
         );
-        params.x = 0;
+//        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+//         | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+//                | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
+
+
+        // 设置视图在屏幕左上角
+//        params.gravity = Gravity.TOP | Gravity.LEFT;
+        params.gravity = Gravity.CENTER;
+
+        params.x = -500;
         params.y = 0;
+//        textView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // 在这里添加代码来添加悬浮图标
+//                // 确保在添加悬浮图标之前已经检查了权限
+//                print();
+//            }
+//        });
+    }
+    public void print(){
+        Log.d(TAG,"textView点击");
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -76,6 +104,9 @@ public class FloatingIcon implements View.OnTouchListener {
         this.params = params;
     }
 
+
+    //TODO 暂时没有用到
+
     public void onIconSettingStart(int val) {
         // 发送广播通知回调
         Intent intent = new Intent(MyApplication.ACTION_ICON_SETTING_START);
@@ -96,6 +127,8 @@ public class FloatingIcon implements View.OnTouchListener {
         }
         return MyApplication.STATUS_FALSE;
     }
+
+    //TODO 暂时没有用到
 
     public static FloatingIcon getInstance(Context context) {
         if (instance == null) {

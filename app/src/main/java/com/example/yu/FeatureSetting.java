@@ -112,7 +112,7 @@ public class FeatureSetting extends Service {
     }
 
     public boolean setData(DataWatcher newDataWatcher) {
-        newDataWatcher.printAttributes(TAG);
+//        newDataWatcher.printAttributes(TAG);
         dataDelay.setText(newDataWatcher.delay);
         dataKeepTime.setText(newDataWatcher.keepTime);
         dataRepeatTimes.setText(newDataWatcher.repeatTimes);
@@ -204,19 +204,22 @@ public class FeatureSetting extends Service {
         FLAG_WATCH_OUTSIDE_TOUCH: 这个标志指示窗口监视在窗口之外的触摸事件
         */
         int layoutFlag;
-        layoutFlag = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+
         // 将320dp转换为像素
         int widthInDp = 320;
         int widthInPixels = getPixels(widthInDp);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 widthInPixels,
                 WindowManager.LayoutParams.WRAP_CONTENT,
-                layoutFlag,
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                         | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
                         | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
                 PixelFormat.TRANSLUCENT
         );
+//         |WindowManager.LayoutParams.FLAG_DIM_BEHIND,
+
+
         params.x = 0;
         params.y = 0;
         params.gravity = android.view.Gravity.CENTER;

@@ -36,9 +36,6 @@ public class MainActivity extends AppCompatActivity {
     public static FloatingIconManager floatingIconManager;
     private final String TAG = "MainActivity";
     private Context context;
-
-    public View contentView;
-
     private final String PACKAGE_NAME = "com.example.yu";
 
 
@@ -50,12 +47,11 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        contentView = findViewById(R.layout.activity_main);
-        MyApplication.contentView = contentView;
-
         context = this;
 
-        floatingIconManager = new FloatingIconManager(this);
+        MyApplication.context = this;
+
+//        floatingIconManager = new FloatingIconManager(this);
 
         // 处理按钮点击事件，用于添加悬浮图标
         Button addButton = findViewById(R.id.add_button);
@@ -63,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         Button setButton = findViewById(R.id.setting_button);
 
         Button beginButton = findViewById(R.id.begin_button);
-        LinearLayout liner = findViewById(R.id.Liner);
 
 
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         beginButton.setOnClickListener(this::beginClick);
-
 
     }
 
@@ -135,7 +129,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void onAddButtonClicked(View view) {
-        floatingIconManager.addFloatingIcon();
+//        floatingIconManager.addFloatingIcon();
+        Intent startService = new Intent(context, FloatingIconManager.class);
+        context.startService(startService);
 
     }
     public void onDelButtonClicked(View view) {

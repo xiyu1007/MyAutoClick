@@ -2,6 +2,7 @@ package com.example.yu;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.SystemClock;
@@ -33,6 +34,8 @@ public class MyApplication extends Application {
     public static final boolean STATUS_FALSE = false;
 
     private static MyApplication myApplication;
+
+    public static Context context;
     private static DataWatcher converyDataWatcher;
 
     //Action
@@ -54,10 +57,9 @@ public class MyApplication extends Application {
 
     public static int WHICH_ICON = 0;
 
+
+
     private static final String TAG = "MyApplication";
-    public static  WindowManager windowManager;
-    public static FloatingIcon floatingIcon;
-    public static View contentView;
 
     public void beginClick(View view) {
 
@@ -79,6 +81,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         myApplication = this;
+
 
         // 设置全局异常处理器
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {

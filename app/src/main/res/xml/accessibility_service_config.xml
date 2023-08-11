@@ -9,6 +9,8 @@
     android:notificationTimeout="100"
     android:packageNames="" />
 
+
+<!--performAction-->
 <!--    ACTION_FOCUS // 获取焦点-->
 <!--    ACTION_CLEAR_FOCUS // 清除焦点-->
 <!--    ACTION_SELECT // 选中-->
