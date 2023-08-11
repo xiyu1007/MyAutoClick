@@ -4,7 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.provider.Settings;
+import android.util.Log;
+import android.view.InputDevice;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 
@@ -49,6 +55,14 @@ public class MyApplication extends Application {
     public static int WHICH_ICON = 0;
 
     private static final String TAG = "MyApplication";
+    public static  WindowManager windowManager;
+    public static FloatingIcon floatingIcon;
+    public static View contentView;
+
+    public void beginClick(View view) {
+
+    }
+
 
     private Config config;
 
@@ -106,6 +120,11 @@ public class MyApplication extends Application {
     }
     public static MyApplication getMyApplication(){
         return myApplication;
+    }
+
+
+    public static void pritfLine(){
+        Log.d(TAG,"===========================================================\n");
     }
 
 

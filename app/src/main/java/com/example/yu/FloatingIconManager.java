@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -25,7 +26,7 @@ public class FloatingIconManager extends AppCompatActivity {
     private final Context context;
     private static int idCounter = 0;
     private final int lofi_data = 10;
-    private final WindowManager windowManager;
+    public  WindowManager windowManager;
     private final List<View> floatingViews = new ArrayList<>();
     private final List<FloatingIcon> floatingIcons = new ArrayList<>();
     private final FeatureSetting featureSetting = new FeatureSetting();
@@ -36,7 +37,7 @@ public class FloatingIconManager extends AppCompatActivity {
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public FloatingIconManager(Context context) {
         this.context = context;
-        this.windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         //广播
         IntentFilter filter = new IntentFilter();
         filter.addAction(MyApplication.ACTION_ICON_SETTING_START);
@@ -66,12 +67,15 @@ public class FloatingIconManager extends AppCompatActivity {
 
         // 创建新的悬浮图标视图
         View floatingView =floatingIcon.getView();
+
         WindowManager.LayoutParams params = floatingIcon.getParams();
 
         // 将悬浮图标添加到主 WindowManager
         windowManager.addView(floatingView, params);
         floatingViews.add(floatingView);
         floatingIcons.add(floatingIcon);
+        MyApplication.windowManager = windowManager;
+        MyApplication.floatingIcon = floatingIcon;
 
         // 设置悬浮图标的拖动功能
         floatingView.setOnTouchListener(new View.OnTouchListener() {
@@ -105,8 +109,11 @@ public class FloatingIconManager extends AppCompatActivity {
                         params.y = initialY + deltaY;
 
                         // 更新悬浮图标的显示位置
+                        Log.d(TAG,"X"+params.x+"Y"+params.y);
                         windowManager.updateViewLayout(floatingView, params);
                         floatingIcon.setParams(params);
+                        MyApplication.windowManager = windowManager;
+                        MyApplication.floatingIcon = floatingIcon;
 
                         // 判断是否移动过
                         if (Math.abs(deltaX) > lofi_data || Math.abs(deltaY) > lofi_data) {
@@ -210,5 +217,6 @@ public class FloatingIconManager extends AppCompatActivity {
     public int getIdCounter() {
         return idCounter;
     }
+
 
 }

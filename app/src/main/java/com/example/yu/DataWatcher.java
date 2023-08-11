@@ -74,7 +74,7 @@ public class DataWatcher implements Serializable{
     // 打印对象属性
 
     public String printAttributes(String TAG) {
-        String logMessage = "===========================================================\n" +
+        String logMessage = "\n===========================================================\n" +
                 "delay: " + delay + "\n" +
                 "keepTime: " + keepTime + "\n" +
                 "repeatTimes: " + repeatTimes + "\n" +
@@ -83,7 +83,7 @@ public class DataWatcher implements Serializable{
                 "type: " + type + "\n" +
                 "timed: " + timed + "\n" +
                 "===========================================================\n";
-        Log.d(TAG,logMessage);
+        //Log.d(TAG,logMessage);
         return logMessage;
     }
 

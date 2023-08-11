@@ -44,6 +44,8 @@ public class FloatingIcon implements View.OnTouchListener {
                 PixelFormat.TRANSLUCENT
                 // 设置窗口背景为透明
         );
+        params.x = 0;
+        params.y = 0;
     }
 
     @SuppressLint("ClickableViewAccessibility")

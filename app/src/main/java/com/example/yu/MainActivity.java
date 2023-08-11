@@ -2,41 +2,69 @@ package com.example.yu;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.accessibilityservice.AccessibilityServiceInfo;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.Settings;
+import android.util.Log;
+import android.view.InputDevice;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author XiYU
  */
 public class MainActivity extends AppCompatActivity {
 
-    private FloatingIconManager floatingIconManager;
+    @SuppressLint("StaticFieldLeak")
+    public static FloatingIconManager floatingIconManager;
     private final String TAG = "MainActivity";
+    private Context context;
 
-    private final String ACCESSIBILITY_SERVICE = "accessibility_service";
+    public View contentView;
+
+    private final String PACKAGE_NAME = "com.example.yu";
 
 
+
+    @SuppressLint({"ResourceType", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
+        contentView = findViewById(R.layout.activity_main);
+        MyApplication.contentView = contentView;
+
+        context = this;
+
         floatingIconManager = new FloatingIconManager(this);
 
         // 处理按钮点击事件，用于添加悬浮图标
         Button addButton = findViewById(R.id.add_button);
         Button delButton = findViewById(R.id.delete_button);
-        Button beginButton = findViewById(R.id.begin_button);
         Button setButton = findViewById(R.id.setting_button);
+
+        Button beginButton = findViewById(R.id.begin_button);
+        LinearLayout liner = findViewById(R.id.Liner);
+
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,30 +93,45 @@ public class MainActivity extends AppCompatActivity {
 
         beginButton.setOnClickListener(this::beginClick);
 
+
     }
 
     private void beginClick(View view) {
-        Intent intent = new Intent(this, MyAccessibilityService.class);
-        startService(intent);
-        // Start your MyAccessibilityService here
-        MyAccessibilityService myAccessibilityService = (MyAccessibilityService)
-                getSystemService(MyAccessibilityService.class);
-        if (myAccessibilityService != null) {
-            ShowToast.show(MainActivity.this, "mmmyyy");
 
-            myAccessibilityService.performClick();
-        } else {
-            ShowToast.show(MainActivity.this, "affafaf");
 
+    }
+
+    /**
+     * 开启无障碍服务
+     */
+    public void onSetButtonClicked(View view) {
+        if (!hasOverlayPermission()){
+            openOverlayPermission();
         }
-
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
+        if (!hasAccessibilityServiceEnabled()){
+            openAccessibilitySettings();
+        }
     }
 
+    private boolean hasOverlayPermission() {
+        return Settings.canDrawOverlays(this);
+    }
+    private boolean hasAccessibilityServiceEnabled() {
+        //检测当前无障碍服务已开启的应用列表信息
+        AccessibilityManager am = (AccessibilityManager) getSystemService
+                (Context.ACCESSIBILITY_SERVICE);
+        List<AccessibilityServiceInfo> accessibilityServiceList =
+                am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC);
+        for (AccessibilityServiceInfo info : accessibilityServiceList) {
+            String packageName = info.getResolveInfo().serviceInfo.packageName;
+//            MyApplication.pritfLine();
+//            Log.e(TAG, "当前已开启的无障碍服务的信息: " + info.getResolveInfo().toString());
+            if(Objects.equals(packageName, PACKAGE_NAME)){
+                return MyApplication.STATUS_TRUE;
+            }
+        }
+        return MyApplication.STATUS_FALSE;
+    }
 
 
     public void onAddButtonClicked(View view) {
@@ -101,59 +144,56 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void onSetButtonClicked(View view) {
-        if (hasAccessibilityServiceEnabled()&&hasOverlayPermission()){
-            ShowToast.show(MainActivity.this, "已有悬浮权限");
-        }else {
-             if(openAccessibilitySettings()){
-                 ShowToast.show(MainActivity.this, "授予无障碍权限成功");
-             }else {
-                 ShowToast.show(MainActivity.this, "授予无障碍权限失败");
-             }
-        }
-    }
-
-    public boolean openOverlayPermission(){
+    public void openOverlayPermission(){
         // 若未授予权限，则向用户请求权限
         Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
         requestOverlayPermissionLauncher.launch(intent);
-        return MyApplication.STATUS_FALSE;
+
     }
-    private boolean openAccessibilitySettings() {
+    private void openAccessibilitySettings() {
         Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-        startActivity(intent);
-//        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-//        requestAccessibilityPermissionLauncher.launch(intent);
-        return MyApplication.STATUS_FALSE;
-    }
-    private boolean hasOverlayPermission() {
-        return Settings.canDrawOverlays(this);
-    }
-    private boolean hasAccessibilityServiceEnabled() {
-        int accessibilityEnabled = Settings.Secure.getInt(
-                getContentResolver(),
-                android.provider.Settings.Secure.ACCESSIBILITY_ENABLED,
-                0
-        );
+        requestAccessibilityPermissionLauncher.launch(intent);
 
-        return accessibilityEnabled == 1;
+        //跳转到系统设置页面，由用户手动点击确认是否开启对应的无障碍服务
+        //Intent intent = new Intent();
+        //intent.setAction(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+        ////intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //startActivity(intent);
     }
 
+    ActivityResultLauncher<Intent> requestAccessibilityPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                // 用户处理权限请求后，再次检查是否已授予权限
+                if (!hasAccessibilityServiceEnabled()) {
+                    // 用户拒绝了权限请求，显示提示信息
+                    ShowToast.show(MainActivity.this, "授予无障碍权限失败");
+                    MyApplication.pritfLine();
+                    Log.e(TAG, PACKAGE_NAME+"未开启无障碍服务");
+                    WriteToLog.writeLogToFile(context,"授予无障碍权限失败",false);
 
+                }else {
+                    ShowToast.show(MainActivity.this, "成功获取权限");
+                    MyApplication.pritfLine();
+                    Log.e(TAG, TAG +PACKAGE_NAME+ "开启无障碍服务");
+                    WriteToLog.writeLogToFile(context,"成功获取权限",false);
+                }
+            }
+    );
 
     ActivityResultLauncher<Intent> requestOverlayPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 // 用户处理权限请求后，再次检查是否已授予权限
-                if (Settings.canDrawOverlays(this)) {
-                    // 已授予权限，可以继续添加悬浮图标
-                    floatingIconManager.addFloatingIcon();
-                }else {
+                if (!Settings.canDrawOverlays(this)) {
                     // 用户拒绝了权限请求，显示提示信息
                     ShowToast.show(MainActivity.this, "授予悬浮权限失败");
                 }
             }
     );
+
+
+
 
     @Override
     protected void onDestroy() {

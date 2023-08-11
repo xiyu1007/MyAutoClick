@@ -4,12 +4,43 @@
     android:accessibilityFeedbackType="feedbackGeneric"
     android:accessibilityFlags="flagDefault"
     android:canRetrieveWindowContent="true"
+    android:canPerformGestures="true"
     android:description="@string/description"
     android:notificationTimeout="100"
-    android:settingsActivity=".MyApplication"
-    android:packageNames="package com.example.yu;" />
+    android:packageNames="" />
+
+<!--    ACTION_FOCUS // 获取焦点-->
+<!--    ACTION_CLEAR_FOCUS // 清除焦点-->
+<!--    ACTION_SELECT // 选中-->
+<!--    ACTION_CLEAR_SELECTION // 清除选中状态-->
+<!--    ACTION_ACCESSIBILITY_FOCUS // 无障碍焦点-->
+<!--    ACTION_CLEAR_ACCESSIBILITY_FOCUS // 清除无障碍焦点-->
+<!--    ACTION_CLICK // 点击-->
+<!--    ACTION_LONG_CLICK // 长按-->
+<!--    ACTION_NEXT_AT_MOVEMENT_GRANULARITY // 下一步移动-->
+<!--    ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY // 上一步移动-->
+<!--    ACTION_NEXT_HTML_ELEMENT // 下一个 html 元素-->
+<!--    ACTION_PREVIOUS_HTML_ELEMENT // 上一个 html 元素-->
+<!--    ACTION_SCROLL_FORWARD // 向前滑动-->
+<!--    ACTION_SCROLL_BACKWARD // 向后滑动-->
+<!--    AccessibilityNodeInfo.ACTION_SCROLL: 滚动事件-->
+<!--    AccessibilityNodeInfo.ACTION_CLEAR_ACCESSIBILITY_FOCUS: 清除无障碍焦点-->
+<!--    AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS: 设置无障碍焦点-->
+<!--    AccessibilityNodeInfo.ACTION_CLEAR_FOCUS: 清除焦点-->
+<!--    AccessibilityNodeInfo.ACTION_SET_SELECTION: 设置文本选择-->
 
 
+
+<!--    AccessibilityEvent.TYPE_ANNOUNCEMENT: 公告事件-->
+<!--    AccessibilityEvent.TYPE_GESTURE_DETECTION_START: 手势检测开始事件-->
+<!--    AccessibilityEvent.TYPE_GESTURE_DETECTION_END: 手势检测结束事件-->
+<!--    AccessibilityEvent.TYPE_TOUCH_EXPLORATION_GESTURE_START: 触摸探索手势开始事件-->
+<!--    AccessibilityEvent.TYPE_TOUCH_EXPLORATION_GESTURE_END: 触摸探索手势结束事件-->
+<!--    AccessibilityEvent.TYPE_VIEW_CLICKED: 视图被点击事件-->
+<!--    AccessibilityEvent.TYPE_VIEW_LONG_CLICKED: 视图被长按事件-->
+<!--    AccessibilityEvent.TYPE_VIEW_SELECTED: 视图被选择事件-->
+<!--    AccessibilityEvent.TYPE_VIEW_FOCUSED: 视图获得焦点事件-->
+<!--    AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED: 视图文本改变事件-->
 <!--    typeViewClicked：当用户点击了一个视图元素时触发。-->
 <!--    typeViewFocused：当视图元素获得焦点时触发。-->
 <!--    typeViewLongClicked：当用户长按一个视图元素时触发。-->
