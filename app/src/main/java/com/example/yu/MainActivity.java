@@ -12,17 +12,21 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.InputDevice;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.List;
 import java.util.Objects;
@@ -38,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     private final String PACKAGE_NAME = "com.example.yu";
 
-
+    public static  WindowManager windowManager;
 
     @SuppressLint({"ResourceType", "MissingInflatedId"})
     @Override
@@ -48,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         context = this;
+
+        windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+
 
         MyApplication.context = this;
 
@@ -91,7 +98,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void beginClick(View view) {
+        View floatingView = LayoutInflater.from(context).inflate(R.layout.test, null);
+        // 查找TextView并设置其文本
+        WindowManager.LayoutParams params;
+        Button test = floatingView.findViewById(R.id.test);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 在这里添加代码来添加悬浮图标
+                // 确保在添加悬浮图标之前已经检查了权限
+                MyApplication.pritfLine();
+            }
+        });
 
+        params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                // 宽度设置为自适应内容
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                // 高度设置为自适应内容
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                // 设置类型为应用程序悬浮窗口
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                // 不获取焦点，避免影响其他操作
+                PixelFormat.TRANSLUCENT
+                // 设置窗口背景为透明
+        );
+        windowManager.addView(floatingView,params);
 
     }
 

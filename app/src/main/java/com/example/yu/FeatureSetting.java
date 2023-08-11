@@ -67,9 +67,11 @@ public class FeatureSetting extends Service {
     @SuppressLint("InflateParams")
     public void onCreate() {
         super.onCreate();
+        context = getApplicationContext();
+
+
         LayoutInflater inflater = LayoutInflater.from(this);
         floatingView = inflater.inflate(R.layout.feature_setting, null);
-        context = getApplicationContext();
         setView();
         initializeViews(floatingView);
         periordataWatcher = MyApplication.getconveydatawatcher();
@@ -223,6 +225,7 @@ public class FeatureSetting extends Service {
         params.x = 0;
         params.y = 0;
         params.gravity = android.view.Gravity.CENTER;
+
         windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         windowManager.addView(floatingView, params);
     }

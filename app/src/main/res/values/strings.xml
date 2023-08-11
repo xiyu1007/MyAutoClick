@@ -11,7 +11,7 @@
     <string name="simulateTouch">模拟点击事件</string>
     <string name="scroll">模拟下拉手势</string>
 
-    <string name="floating_icon">Floating Icon</string>
+    <string name="aim_text">Floating Icon</string>
 
 
     <string name="add_button">Add_button</string>
@@ -21,6 +21,7 @@
     <string name="float_bar_description">悬浮窗</string>
     <string name="aim_description">图标</string>
     <string name="aim_img">aim_img</string>
+    <string name="test">test</string>
 </resources>
 
 <!--<string name="label">定时点击器</string>  显示的名称-->

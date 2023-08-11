@@ -42,6 +42,9 @@ public class MyAccessibilityService extends AccessibilityService implements Acce
             if (event.getPackageName() != null && event.getPackageName().equals(PACKAGENAME)) {
                 Log.i(TAG,"TYPE_WINDOW_CONTENT_CHANGED");
                 WriteToLog.writeLogToFile(this,"TYPE_WINDOW_CONTENT_CHANGED",false);
+                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+                printRootNodeInfo(rootNode);
+                printChildNodeInfo(rootNode);
             }
         } else if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED) {
             if (event.getPackageName() != null && event.getPackageName().equals(PACKAGENAME)) {

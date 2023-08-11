@@ -24,7 +24,7 @@ public class FloatingIcon implements View.OnTouchListener {
     private final View floatingView;
     private int id = 1;
     @SuppressLint("StaticFieldLeak")
-    private static FloatingIcon instance;
+    private static FloatingIcon floatingIcon;
     private  WindowManager.LayoutParams params;
 
     private final Context context;
@@ -130,11 +130,11 @@ public class FloatingIcon implements View.OnTouchListener {
 
     //TODO 暂时没有用到
 
-    public static FloatingIcon getInstance(Context context) {
-        if (instance == null) {
-            instance = new FloatingIcon(context);
+    public static FloatingIcon getFloatingIcon(Context context) {
+        if (floatingIcon == null) {
+            floatingIcon = new FloatingIcon(context);
         }
-        return instance;
+        return floatingIcon;
     }
 
 }
