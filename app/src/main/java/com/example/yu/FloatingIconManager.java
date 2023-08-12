@@ -85,16 +85,16 @@ public class FloatingIconManager extends Service {
         // 创建新的悬浮图标视图
         View floatingView =floatingIcon.getView();
 //
-//        WindowManager.LayoutParams params = floatingIcon.getParams();
+        WindowManager.LayoutParams params = floatingIcon.returnParams();
 
 //        LayoutInflater inflater = LayoutInflater.from(this);
 //        View floatingView = inflater.inflate(R.layout.floating_icon_layout, null);
 
 
-        windowManager.addView(floatingView, setView());
+        windowManager.addView(floatingView, params);
         // 将悬浮图标添加到主 WindowManager
         floatingViews.add(floatingView);
-//        floatingIcons.add(floatingIcon);
+        floatingIcons.add(floatingIcon);
 
         // 设置悬浮图标的拖动功能
 //        floatingView.setOnTouchListener(new View.OnTouchListener() {

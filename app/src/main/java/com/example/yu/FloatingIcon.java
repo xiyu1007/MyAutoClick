@@ -1,6 +1,7 @@
 package com.example.yu;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -16,7 +17,7 @@ import android.widget.TextView;
 /**
  * @author ASUS
  */
-public class FloatingIcon implements View.OnTouchListener {
+public class FloatingIcon extends Activity {
     public DataWatcher dataWatcher;
 
     public SharedPreferencesHelper sharedPreferencesHelper;
@@ -35,9 +36,7 @@ public class FloatingIcon implements View.OnTouchListener {
         this.context = context;
 
         this.floatingView = LayoutInflater.from(context).inflate(R.layout.floating_icon_layout, null);
-        // 查找TextView并设置其文本
 
-        TextView textView = floatingView.findViewById(R.id.number_text);
         setNumber();
 
         this.params = new WindowManager.LayoutParams(
@@ -61,27 +60,12 @@ public class FloatingIcon implements View.OnTouchListener {
 //        params.gravity = Gravity.TOP | Gravity.LEFT;
         params.gravity = Gravity.CENTER;
 
-        params.x = -500;
+        params.x = 0;
         params.y = 0;
-//        textView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // 在这里添加代码来添加悬浮图标
-//                // 确保在添加悬浮图标之前已经检查了权限
-//                print();
-//            }
-//        });
-    }
-    public void print(){
-        Log.d(TAG,"textView点击");
+
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        // Touch event handling logic
-        return true;
-    }
+
 
     public void setNumber(){
         TextView numberText = floatingView.findViewById(R.id.number_text);
@@ -96,7 +80,7 @@ public class FloatingIcon implements View.OnTouchListener {
     public View getView() {
         return this.floatingView;
     }
-    public WindowManager.LayoutParams getParams() {
+    public WindowManager.LayoutParams returnParams() {
         return this.params;
     }
 
