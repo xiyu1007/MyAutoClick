@@ -118,56 +118,6 @@ public class FloatingIconManager extends Service{
 
 
 
-        //TODO 需要修改的部分
-        // 设置悬浮图标的拖动功能,如果超过500ms,则触发showFeatureSetting
-
-        floatingView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        Log.d(TAG, String.valueOf(+floatingIcon.getId())+String.valueOf(floatingView.isClickable()));
-                        initialX = params.x;
-                        initialY = params.y;
-                        initialTouchX = event.getRawX();
-                        initialTouchY = event.getRawY();
-                        handler.postDelayed(longPressRunnable, 500);
-                        return false;
-                    case MotionEvent.ACTION_MOVE:
-                        int deltaX = (int) (event.getRawX() - initialTouchX);
-                        int deltaY = (int) (event.getRawY() - initialTouchY);
-
-                        params.x = initialX + deltaX;
-                        params.y = initialY + deltaY;
-
-                        windowManager.updateViewLayout(floatingView, params);
-                        floatingIcon.setParams(params);
-
-                        if (Math.abs(deltaX) > absMoveLength || Math.abs(deltaY) > absMoveLength) {
-                            handler.removeCallbacks(longPressRunnable);
-                        }
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        handler.removeCallbacks(longPressRunnable);
-                        Log.d(TAG,"up");
-                        boolean aa = floatingView.performClick(); // 触发点击操作
-                        Log.d(TAG, String.valueOf(aa));
-
-                        return true;
-                    default:
-                        return true;
-                }
-            }
-
-            // 长按操作的Runnable
-            private final Runnable longPressRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    // 长按操作
-                    showFeatureSetting(floatingIcon);
-                }
-            };
-        });
     }
 
     public void updateWindowManagerParams(WindowManager windowManager,List<View> floatingViews,boolean IS_TOUCHABLE){
