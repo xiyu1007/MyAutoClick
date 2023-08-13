@@ -15,6 +15,8 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -22,6 +24,8 @@ import java.util.Objects;
  */
 public class MyApplication extends Application {
 
+
+    public static final int MAX_FLOATING_ICONS = 5;
     public static  int MIN_VALUE = 0;
     public static final int MAX_VALUE = 10000;
 
@@ -60,6 +64,8 @@ public class MyApplication extends Application {
     private static final String TAG = "MyApplication";
 
     public static  WindowManager windowManager;
+    public static List<FloatingIcon> floatingIcons = new ArrayList<>();
+    public static  boolean is_delete_node = false;
 
 
     private Config config;

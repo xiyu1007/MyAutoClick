@@ -64,8 +64,6 @@ public class FloatingIcon extends Activity {
 
     }
 
-
-
     public void setNumber(){
         TextView numberText = floatingView.findViewById(R.id.aim_text);
         numberText.setText(String.valueOf(this.id));

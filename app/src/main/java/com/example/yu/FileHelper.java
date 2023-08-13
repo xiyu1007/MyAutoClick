@@ -20,8 +20,8 @@ public class FileHelper {
     private final Context context;
 
 
-    private final File internalDirectory;
-    private final File externalFilesDir;
+//    private final File internalDirectory;
+//    private final File externalFilesDir;
 
     private static final String TAG = "FileHelper";
     private static boolean Return_Status = false;
@@ -29,9 +29,9 @@ public class FileHelper {
     public FileHelper(Context context) {
         this.context = context;
         //外部目录
-        externalFilesDir = context.getExternalFilesDir(null);
+//        externalFilesDir = context.getExternalFilesDir(null);
         //内部目录
-        internalDirectory = context.getFilesDir();
+//        internalDirectory = context.getFilesDir();
     }
 
     // 写入文本到文件
@@ -96,11 +96,6 @@ public class FileHelper {
                 Object obj = in.readObject();
                 if (obj instanceof List) {
                     List<DataWatcher> dataWatcherList = (List<DataWatcher>) obj;
-                    // 现在您可以使用 readDataWatchers
-                    //DataWatcher secondDataWatcher = readDataWatchers.get(1);
-                    //for (DataWatcher dataWatcher : readDataWatchers) {
-                    //   //在这里处理每个 DataWatcher 对象
-                    //}
                     return dataWatcherList;
                 } else {
                     // 处理类型不匹配的情况

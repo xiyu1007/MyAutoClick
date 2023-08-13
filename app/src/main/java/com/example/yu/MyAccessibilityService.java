@@ -5,45 +5,64 @@ import android.accessibilityservice.AccessibilityServiceInfo;
 import android.accessibilityservice.GestureDescription;
 import android.annotation.SuppressLint;
 import android.graphics.Path;
-import android.graphics.PixelFormat;
 import android.graphics.Rect;
-import android.os.Build;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
-import android.widget.Button;
-import android.widget.LinearLayout;
 
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author ASUS
  */
-public class MyAccessibilityService extends AccessibilityService implements AccessibilityServiceInterface {
+public class MyAccessibilityService extends AccessibilityService{
     private static final String TAG = "AccessibilityService";
     private final String PACKAGENAME = "com.example.yu";
 
-    private WindowManager windowManager;
-    private View floatBarView;
-    private LinearLayout linearLayout;
-    private  WindowManager.LayoutParams params;
+    private volatile boolean isStopClick = false;
+    private ThreadPoolExecutor clickThreadPool;
 
-    public static FloatingIconManager floatingIconManager;
+    public static List<FloatingIcon> floatingIcons = new ArrayList<>();
+    List<List<String>> clickPointMessages = new ArrayList<>();
 
-    private List<AccessibilityNodeInfo> accessibilityNodeInfos = new ArrayList<>();
-
+    // 初始化 clickPointMessages 列表
     @SuppressLint("InflateParams")
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
 
+        setAccessibilityNodeInfos();
+
+        for (int i = 0; i < MyApplication.MAX_FLOATING_ICONS; i++) {
+            clickPointMessages.add(new ArrayList<>());
+        }
+
+        ThreadFactory threadFactory = new MyThreadFactory();
+        // Replace with your custom ThreadFactory implementation
+        int corePoolSize = 1;
+        // 初始核心线程数
+        int maximumPoolSize = 5;
+        // 最大线程数
+        long keepAliveTime = 0;
+        // 线程空闲时间
+        TimeUnit unit = TimeUnit.MILLISECONDS;
+        // 时间单位
+        BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>();
+        // 任务队列
+        clickThreadPool = new ThreadPoolExecutor(
+                corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory
+        );
+
     }
+
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -52,127 +71,110 @@ public class MyAccessibilityService extends AccessibilityService implements Acce
         Log.e(TAG,s);
         if (rootNode !=null) {
             if (event.getPackageName() != null && event.getPackageName().equals(PACKAGENAME)) {
-                MyApplication.pritfLine();
-                List<AccessibilityNodeInfo> list = rootNode.findAccessibilityNodeInfosByViewId("com.example.yu:id/aim_text");
-                for (AccessibilityNodeInfo node : list) {
-                    String nodeId = node.getViewIdResourceName() != null ? node.getViewIdResourceName() : "No ID";
-                    String nodeText = node.getText() != null ? node.getText().toString() : "No text";
-                    String nodeDescription = node.getContentDescription() != null ? node.getContentDescription().toString() : "No description";
-                    Rect boundsInScreen = new Rect();
-                    node.getBoundsInScreen(boundsInScreen);
-                    Log.d(TAG, "Node ID: " + nodeId);
-                    Log.d(TAG, "Node Text: " + nodeText);
-                    Log.d(TAG, "Node Description: " + nodeDescription);
-                    Log.d(TAG, "Node Bounds in Screen: left=" + boundsInScreen.left + ", top=" + boundsInScreen.top +
-                            ", right=" + boundsInScreen.right + ", bottom=" + boundsInScreen.bottom);
-                    accessibilityNodeInfos.add(node);
-                    node.recycle(); // 记得回收节点资源
-                }
-                MyApplication.pritfLine();
-
-//                printNodeInfo(rootNode);
-//                printChildNodeInfo(rootNode);
+                List<AccessibilityNodeInfo> nodeInfoList = rootNode.findAccessibilityNodeInfosByViewId("com.example.yu:id/aim_text");
+                updateClickNodeMessage(nodeInfoList);
             }
 
         }
-
-        if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
-            if (event.getPackageName() != null && event.getPackageName().equals(PACKAGENAME)) {
-                Log.i(TAG,"TYPE_WINDOW_CONTENT_CHANGED");
-//                WriteToLog.writeLogToFile(this,"TYPE_WINDOW_CONTENT_CHANGED",false);
-            }
-        } else if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED) {
+         else if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED) {
             if (event.getPackageName() != null && event.getPackageName().equals(PACKAGENAME)) {
                 Log.i(TAG,"TYPE_VIEW_CLICKED");
 //                simulateClick(400,100);
 //                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-                if (accessibilityNodeInfos.size()!=0){
-                    for (AccessibilityNodeInfo node :accessibilityNodeInfos){
-                        myGetBoundsInScreen(node);
+            }
+        }
+    }
+
+    private void updateClickNodeMessage(List<AccessibilityNodeInfo> nodeInfoList){
+        for (AccessibilityNodeInfo node : nodeInfoList) {
+            try {
+                int clickSequence = Integer.parseInt(node.getText().toString());
+                Rect nodeBoundsInScreen = myGetBoundsInScreen(node);
+                List<String> dataToStringArray = new ArrayList<>();
+
+                for (FloatingIcon floatingIcon : MyApplication.floatingIcons) {
+                    if (floatingIcon.getId() == clickSequence) {
+                        dataToStringArray = floatingIcon.dataWatcher.dataToArrayList();
+                        if (dataToStringArray.size() >= 7) {
+                            dataToStringArray.add(String.valueOf(nodeBoundsInScreen.centerX()));
+                            dataToStringArray.add(String.valueOf(nodeBoundsInScreen.centerY()));
+                        } else {
+                            dataToStringArray.set(5, String.valueOf(nodeBoundsInScreen.centerX()));
+                            // Replace index 5
+                            dataToStringArray.set(6, String.valueOf(nodeBoundsInScreen.centerY()));
+                            // Replace index 6
+                        }
                     }
-                }else {
-                    Log.d(TAG,"为0");
                 }
+                clickPointMessages.set(clickSequence, dataToStringArray);
+
+                node.recycle(); // 记得回收节点资源
+
+            } catch (NumberFormatException e) {
+                // 处理转换异常，例如打印错误日志或者提醒用户输入无效
+                e.printStackTrace();
+                ShowToast.show(this,"出错了，请重启");
+                // 或者显示一个提示给用户
             }
-        } else if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            if (event.getPackageName() != null && event.getPackageName().equals(PACKAGENAME)){
-
-            }
-
         }
-    }
-    private void printChildNodeInfo(AccessibilityNodeInfo nodeInfo) {
-        if (nodeInfo == null) {
-            return;
-        }
+        for (int i = 0; i < clickPointMessages.size(); i++) {
 
-        for (int i = 0; i < nodeInfo.getChildCount(); i++) {
-            MyApplication.pritfLine();
-            AccessibilityNodeInfo childNode = nodeInfo.getChild(i);
-
-            if (childNode != null) {
-                MyApplication.pritfLine();
-                MyApplication.pritfLine();
-                Log.d("Child Node Info", "Package Name: " + childNode.getPackageName());
-                Log.d("Child Node Info", "Class Name: " + childNode.getClassName());
-                Log.d("Child Node Info", "Text: " + childNode.getText());
-
-                // 递归打印子节点的子节点
-                printChildNodeInfo(childNode);
-
-                // 释放资源
-                childNode.recycle();
+            List<String> clickEvent = clickPointMessages.get(i);
+            if (!clickEvent.isEmpty()) {
+                String logMessage = "Click Sequence " + i + ": " + clickEvent.toString();
+                Log.d(TAG, logMessage);
             }
         }
     }
 
-    private void printNodeInfo(AccessibilityNodeInfo nodeInfo) {
-        if (nodeInfo == null) {
-            return;
+
+    // 修改 stopClickSimulation 方法，停止点击线程池：
+
+    private void stopClickSimulation() {
+        isStopClick = true;
+        try {
+            clickThreadPool.shutdown();
+            if (!clickThreadPool.awaitTermination(500, TimeUnit.MILLISECONDS)) {
+                //500ms强行关闭
+                clickThreadPool.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            clickThreadPool.shutdownNow();
         }
-        MyApplication.pritfLine();
-
-        Log.d("Node Info", "Package Name: " + nodeInfo.getPackageName());
-        Log.d("Node Info", "Class Name: " + nodeInfo.getClassName());
-        Log.d("Node Info", "Content Description: " + nodeInfo.getContentDescription());
-        Log.d("Node Info", "Text: " + nodeInfo.getText());
-        Log.d("Node Info", "Clickable: " + nodeInfo.isClickable());
-        Log.d("Node Info", "id: " + nodeInfo.getUniqueId());
-        // Add more properties as needed
-
-        // Recycle the nodeInfo object
-        nodeInfo.recycle();
     }
 
-
-
-    private void simulateClick(int x, int y) {
-        AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-        if (rootNode == null) {
-            return;
-        }
-        List<AccessibilityNodeInfo> id =  rootNode.findAccessibilityNodeInfosByViewId("aim_icon");
-        List<AccessibilityNodeInfo> text = rootNode.findAccessibilityNodeInfosByText("Add_button");
-
-        if (!text.isEmpty()) {
-            AccessibilityNodeInfo textNode = text.get(0);
-            MyApplication.pritfLine();
-//            myGetBoundsInScreen(textNode);
-//            printNodeInfo(textNode);
-        } else {
-            Log.d("Node Info", "No node found by text");
-        }
-
+    private void startSimulateClick(int x, int y) {
         Path clickPath = new Path();
         clickPath.moveTo(x, y);
-
         GestureDescription.Builder gestureBuilder = new GestureDescription.Builder();
         gestureBuilder.addStroke(new GestureDescription.StrokeDescription(clickPath, 0, 100));
-
         GestureDescription gestureDescription = gestureBuilder.build();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            dispatchGesture(gestureDescription, null, null);
+        while (!isStopClick) {
+            try {
+                clickThreadPool.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            dispatchGesture(gestureDescription, null, null);
+                        } catch (Exception e) {
+                            WriteToLog.writeLogToFile(MyAccessibilityService.this, "点击出错：" + e.getMessage(), true);
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+                // 控制点击频率和休眠时间
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    WriteToLog.writeLogToFile(MyAccessibilityService.this, "点击结束：" + e.getMessage(), true);
+                    e.printStackTrace();
+                }
+            } catch (RejectedExecutionException e) {
+                WriteToLog.writeLogToFile(MyAccessibilityService.this, "任务被拒绝：" + e.getMessage(), true);
+                e.printStackTrace();
+            }
         }
     }
 
@@ -193,19 +195,30 @@ public class MyAccessibilityService extends AccessibilityService implements Acce
         return boundsInScreen;
     }
 
+    private void printNodeMessage(AccessibilityNodeInfo node){
+        String nodeId = node.getViewIdResourceName() != null ? node.getViewIdResourceName() : "No ID";
+        String nodeText = node.getText() != null ? node.getText().toString() : "No text";
+        String nodeDescription = node.getContentDescription() != null ? node.getContentDescription().toString() : "No description";
+        Rect boundsInScreen = new Rect();
+        node.getBoundsInScreen(boundsInScreen);
+        MyApplication.pritfLine();
+        Log.d(TAG, "Node ID: " + nodeId);
+        Log.d(TAG, "Node Text: " + nodeText);
+        Log.d(TAG, "Node Description: " + nodeDescription);
+        Log.d(TAG, "Node Bounds in Screen: left=" + boundsInScreen.left + ", top=" + boundsInScreen.top +
+                ", right=" + boundsInScreen.right + ", bottom=" + boundsInScreen.bottom);
+    }
+
+
     @Override
     public void onInterrupt() {
         Log.e(TAG, "Something went wrong");
     }
 
-    //TODO 目前不知道怎么用
 
-    @Override
-    public void sendAccessibilityEvent(AccessibilityEvent event) {
-        AccessibilityServiceInterface.super.sendAccessibilityEvent(event);
-    }
-
-    //TODO 动态配置，未使用
+    //TODO 动态配置，有时候onAccessibilityEvent无反应则需要配置以下
+    //TODO 动态配置，有时候onAccessibilityEvent无反应则需要配置以下
+    //TODO 动态配置，有时候onAccessibilityEvent无反应则需要配置以下
 
     private void setAccessibilityNodeInfos(){
         AccessibilityServiceInfo serviceInfo = new AccessibilityServiceInfo();

@@ -1,11 +1,7 @@
 package com.example.yu;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-
 import java.io.*;
-import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 public class DataWatcher implements Serializable{
     private final String TAG = "DataWatcher";
@@ -87,6 +83,17 @@ public class DataWatcher implements Serializable{
         return logMessage;
     }
 
+    public ArrayList<String> dataToArrayList() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add(delay);
+        arrayList.add(keepTime);
+        arrayList.add(repeatTimes);
+        arrayList.add(diameter);
+        arrayList.add(randomDelay);
+        arrayList.add(type);
+        arrayList.add(timed);
+        return arrayList;
+    }
     public String dataToString() {
         return "DataWatcher{" + "delay='" + delay + '\'' +
                 ", keepTime='" + keepTime + '\'' +

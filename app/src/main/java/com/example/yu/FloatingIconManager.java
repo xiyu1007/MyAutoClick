@@ -6,21 +6,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.PixelFormat;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,17 +23,20 @@ import java.util.List;
  */
 public class FloatingIconManager extends Service{
 
-    private static final int MAX_FLOATING_ICONS = 5;
     private Context context;
     private Handler handler;
     private static int idCounter = 0;
-    private final int lofi_data = 10;
+    private final int absMoveLength = 10;
     public  WindowManager windowManager;
     public final List<View> floatingViews = new ArrayList<>();
     private final List<FloatingIcon> floatingIcons = new ArrayList<>();
     private final FeatureSetting featureSetting = new FeatureSetting();
     private final String TAG =  "FloatingIconManager";
 
+    private int initialX = 0;
+    private int initialY;
+    private float initialTouchX;
+    private float initialTouchY;
 
 //    public  FloatingIconManager() {
 //    }
@@ -49,8 +46,6 @@ public class FloatingIconManager extends Service{
 
         //TODO
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        MyApplication.windowManager = windowManager;
-
         //延时
         handler = new Handler(Looper.getMainLooper());
 
@@ -72,7 +67,6 @@ public class FloatingIconManager extends Service{
 //        windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 //        MyApplication.windowManager = windowManager;
 
-
         //延时
         handler = new Handler(Looper.getMainLooper());
 
@@ -86,7 +80,7 @@ public class FloatingIconManager extends Service{
     }
 
     public void addFloatingIcon() {
-        if (floatingViews.size() >= MAX_FLOATING_ICONS) {
+        if (floatingViews.size() >= MyApplication.MAX_FLOATING_ICONS) {
             // 达到最大悬浮图标数量，不再添加新的图标
             ShowToast.show(this, "达到最大悬浮图标数量");
             return;
@@ -114,95 +108,53 @@ public class FloatingIconManager extends Service{
 //        LayoutInflater inflater = LayoutInflater.from(this);
 //        View floatingView = inflater.inflate(R.layout.floating_icon_layout, null);
 
-        if (floatingView ==null){
-            Log.d(TAG,"111111111111111111111111");
-            return;
-        }
-        if (windowManager ==null){
-            Log.d(TAG,"2222222222222222222222");
 
-            return;
-        }
-        if (params ==null){
-            Log.d(TAG,"33333333333333333");
-
-            return;
-        }
         windowManager.addView(floatingView, params);
         // 将悬浮图标添加到主 WindowManager
         floatingViews.add(floatingView);
         floatingIcons.add(floatingIcon);
 
-        // 设置悬浮图标的拖动功能
-        floatingView.setOnTouchListener(new View.OnTouchListener() {
-            private int initialX;
-            private int initialY;
-            private float initialTouchX;
-            private float initialTouchY;
-            private boolean isMoving = false;
+        MyApplication.floatingIcons = floatingIcons;
 
+
+
+        //TODO 需要修改的部分
+        // 设置悬浮图标的拖动功能,如果超过500ms,则触发showFeatureSetting
+
+        floatingView.setOnTouchListener(new View.OnTouchListener() {
             @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-//                        updateFloatingViewParams(floatingView);
-                        // 获取初始位置
                         initialX = params.x;
                         initialY = params.y;
                         initialTouchX = event.getRawX();
                         initialTouchY = event.getRawY();
-                        isMoving = false;
-                        // 2秒后执行长按操作
                         handler.postDelayed(longPressRunnable, 500);
                         return true;
                     case MotionEvent.ACTION_MOVE:
-                        // 计算移动距离
                         int deltaX = (int) (event.getRawX() - initialTouchX);
                         int deltaY = (int) (event.getRawY() - initialTouchY);
 
-                        // 更新悬浮图标的位置
                         params.x = initialX + deltaX;
                         params.y = initialY + deltaY;
-
-                        MyApplication.pritfLine();
-
-                        // 更新悬浮图标的显示位置
 
                         windowManager.updateViewLayout(floatingView, params);
                         floatingIcon.setParams(params);
 
-                        Rect rect = new Rect();
-                        floatingIcon.getView().getGlobalVisibleRect(rect);
-
-                        Log.d(TAG,"X:"+floatingIcon.returnParams().x+"  Y:"+floatingIcon.getView().getWidth());
-
-
-                        int left = rect.left;
-                        int top = rect.top;
-                        int right = rect.right;
-                        int bottom = rect.bottom;
-
-                        Log.d(TAG,"left:"+left+"  right:"+right);
-                        Log.d(TAG,"top:"+top+"  bottom:"+bottom);
-
-                        // 判断是否移动过
-                        if (Math.abs(deltaX) > lofi_data || Math.abs(deltaY) > lofi_data) {
-                            isMoving = true;
-                            handler.removeCallbacks(longPressRunnable); // 取消长按操作
+                        if (Math.abs(deltaX) > absMoveLength || Math.abs(deltaY) > absMoveLength) {
+                            handler.removeCallbacks(longPressRunnable);
                         }
                         return true;
                     case MotionEvent.ACTION_UP:
-                        handler.removeCallbacks(longPressRunnable); // 取消长按操作
-//                        if (!isMoving) {
-//                            // 执行点击操作
-//                            showFeatureSetting(floatingIcon);
-//                        }
+                        handler.removeCallbacks(longPressRunnable);
+                        floatingView.performClick(); // 触发点击操作
+//                        floatingView.requestFocus(); // 触发聚焦操作
                         return true;
                     default:
                         return false;
                 }
-
             }
 
             // 长按操作的Runnable
@@ -248,12 +200,14 @@ public class FloatingIconManager extends Service{
                     floatingIcon.setId(i);
                 }
             }
+            MyApplication.floatingIcons = floatingIcons;
             idCounter--;
         }
     }
 
     public void showFeatureSetting(FloatingIcon floatingIcon) {
         MyApplication.setConveryDataWatcher(floatingIcon.dataWatcher);
+
         if(floatingIcon.dataWatcher == null){
             ShowToast.show(this,"空");
             return;
@@ -279,6 +233,7 @@ public class FloatingIconManager extends Service{
                     if (intValue == MyApplication.StatusOK) {
                         boolean status = floatingIcons.get(MyApplication.WHICH_ICON -1).updateAttributes(MyApplication.getconveydatawatcher());
                         floatingIcons.get(MyApplication.WHICH_ICON -1).dataWatcher.printAttributes(TAG);
+                        MyApplication.floatingIcons = floatingIcons;
                         if (status){
                             WriteToLog.writeLogToFile(context,TAG+"修改浮窗属性成功",false);
                         }
@@ -288,6 +243,7 @@ public class FloatingIconManager extends Service{
                     }
                 }
             } else if (MyApplication.ACTION_ICON_SETTING_START.equals(intent.getAction())) {
+                //TODO 未使用
                 Bundle extras = intent.getExtras();
                 if (extras != null) {
                     int intValue = extras.getInt(MyApplication.MESSAGE_ICON_SETTING_START);

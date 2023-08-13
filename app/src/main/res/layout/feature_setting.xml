@@ -35,8 +35,7 @@
             android:text="通用设置"
             android:textColor="@color/black"
             android:textSize="18sp"
-            android:layout_marginBottom="5dp"
-            android:onClick="foldSetting"/>
+            android:layout_marginBottom="5dp"/>
 
         <!-- 折叠内容 -->
         <LinearLayout
@@ -196,8 +195,7 @@
             android:text="高级设置"
             android:textColor="@color/black"
             android:layout_marginBottom="5dp"
-            android:textSize="18sp"
-            android:onClick="foldSetting"/>
+            android:textSize="18sp"/>
 
         <!-- 折叠内容 -->
         <LinearLayout
