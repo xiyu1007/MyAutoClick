@@ -3,16 +3,6 @@
     <string name="app_name">Yu</string>
     <string name="description">获取无障碍权限来实现自动点击，获取源码请到：https://github.com/xiyu1007</string>
     <string name="label">定时点击器</string>
-    <string name="icon_id">0</string>
-
-    <string name="power">模拟长按电源</string>
-    <string name="volume">调高手机音量</string>
-    <string name="swipe">模拟右滑手势</string>
-    <string name="simulateTouch">模拟点击事件</string>
-    <string name="scroll">模拟下拉手势</string>
-
-    <string name="aim_text">Floating Icon</string>
-
 
     <string name="add_button">Add_button</string>
     <string name="delete_button">Delete_button</string>
@@ -20,9 +10,11 @@
     <string name="setting_button">Setting_button</string>
     <string name="float_bar_description">悬浮窗</string>
 
-    <string name="aim_description">图标</string>
-    <string name="aim_img">aim_img</string>
+    <string name="icon_id">0</string>
+
+    <string name="aim_frameLayout_description">图标</string>
+    <string name="aim_img_description">aim_img_description</string>
+    <string name="aim_text_description">aim_text_description</string>
 
 </resources>
 
-<!--<string name="label">定时点击器</string>  显示的名称-->

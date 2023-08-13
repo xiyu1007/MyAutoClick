@@ -8,18 +8,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 /**
  * @author ASUS
@@ -54,7 +48,7 @@ public class FloatButton extends Service{
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
         LayoutInflater inflater = LayoutInflater.from(this);
-        floatingButtonsView = inflater.inflate(R.layout.float_button, null);
+        floatingButtonsView = inflater.inflate(R.layout.float_bar, null);
 
         // 悬浮窗口的参数设置
         params = new WindowManager.LayoutParams(

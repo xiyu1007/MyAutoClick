@@ -38,7 +38,6 @@ public class FloatingIcon extends Activity {
         this.floatingView = LayoutInflater.from(context).inflate(R.layout.floating_icon_layout, null);
 
         setNumber();
-
         this.params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 // 宽度设置为自适应内容
@@ -46,8 +45,8 @@ public class FloatingIcon extends Activity {
                 // 高度设置为自适应内容
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 // 设置类型为应用程序悬浮窗口
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                // 不获取焦点，避免影响其他操作
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                        | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
                 PixelFormat.TRANSLUCENT
                 // 设置窗口背景为透明
         );
@@ -68,7 +67,7 @@ public class FloatingIcon extends Activity {
 
 
     public void setNumber(){
-        TextView numberText = floatingView.findViewById(R.id.number_text);
+        TextView numberText = floatingView.findViewById(R.id.aim_text);
         numberText.setText(String.valueOf(this.id));
     }
     public int getId(){

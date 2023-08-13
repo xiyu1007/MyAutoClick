@@ -3,18 +3,23 @@ package com.example.yu;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.accessibilityservice.GestureDescription;
-import android.content.Intent;
-import android.content.pm.ApplicationInfo;
+import android.annotation.SuppressLint;
 import android.graphics.Path;
+import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.os.Build;
-import android.os.IBinder;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
-import android.view.accessibility.AccessibilityWindowInfo;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,18 +29,19 @@ public class MyAccessibilityService extends AccessibilityService implements Acce
     private static final String TAG = "AccessibilityService";
     private final String PACKAGENAME = "com.example.yu";
 
+    private WindowManager windowManager;
+    private View floatBarView;
+    private LinearLayout linearLayout;
+    private  WindowManager.LayoutParams params;
 
+    public static FloatingIconManager floatingIconManager;
+
+    private List<AccessibilityNodeInfo> accessibilityNodeInfos = new ArrayList<>();
+
+    @SuppressLint("InflateParams")
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
-
-        AccessibilityServiceInfo serviceInfo = new AccessibilityServiceInfo();
-//        serviceInfo.eventTypes = AccessibilityEvent.TYPE_WINDOWS_CHANGED;
-        serviceInfo.eventTypes = AccessibilityEvent.TYPES_ALL_MASK;
-        serviceInfo.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
-        serviceInfo.flags = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
-
-        setServiceInfo(serviceInfo);
 
     }
 
@@ -46,13 +52,29 @@ public class MyAccessibilityService extends AccessibilityService implements Acce
         Log.e(TAG,s);
         if (rootNode !=null) {
             if (event.getPackageName() != null && event.getPackageName().equals(PACKAGENAME)) {
-                printNodeInfo(rootNode);
-                printChildNodeInfo(rootNode);
+                MyApplication.pritfLine();
+                List<AccessibilityNodeInfo> list = rootNode.findAccessibilityNodeInfosByViewId("com.example.yu:id/aim_text");
+                for (AccessibilityNodeInfo node : list) {
+                    String nodeId = node.getViewIdResourceName() != null ? node.getViewIdResourceName() : "No ID";
+                    String nodeText = node.getText() != null ? node.getText().toString() : "No text";
+                    String nodeDescription = node.getContentDescription() != null ? node.getContentDescription().toString() : "No description";
+                    Rect boundsInScreen = new Rect();
+                    node.getBoundsInScreen(boundsInScreen);
+                    Log.d(TAG, "Node ID: " + nodeId);
+                    Log.d(TAG, "Node Text: " + nodeText);
+                    Log.d(TAG, "Node Description: " + nodeDescription);
+                    Log.d(TAG, "Node Bounds in Screen: left=" + boundsInScreen.left + ", top=" + boundsInScreen.top +
+                            ", right=" + boundsInScreen.right + ", bottom=" + boundsInScreen.bottom);
+                    accessibilityNodeInfos.add(node);
+                    node.recycle(); // 记得回收节点资源
+                }
+                MyApplication.pritfLine();
+
+//                printNodeInfo(rootNode);
+//                printChildNodeInfo(rootNode);
             }
 
         }
-
-
 
         if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
             if (event.getPackageName() != null && event.getPackageName().equals(PACKAGENAME)) {
@@ -64,6 +86,13 @@ public class MyAccessibilityService extends AccessibilityService implements Acce
                 Log.i(TAG,"TYPE_VIEW_CLICKED");
 //                simulateClick(400,100);
 //                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+                if (accessibilityNodeInfos.size()!=0){
+                    for (AccessibilityNodeInfo node :accessibilityNodeInfos){
+                        myGetBoundsInScreen(node);
+                    }
+                }else {
+                    Log.d(TAG,"为0");
+                }
             }
         } else if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             if (event.getPackageName() != null && event.getPackageName().equals(PACKAGENAME)){
@@ -128,7 +157,7 @@ public class MyAccessibilityService extends AccessibilityService implements Acce
         if (!text.isEmpty()) {
             AccessibilityNodeInfo textNode = text.get(0);
             MyApplication.pritfLine();
-            getPosition(textNode);
+//            myGetBoundsInScreen(textNode);
 //            printNodeInfo(textNode);
         } else {
             Log.d("Node Info", "No node found by text");
@@ -147,18 +176,19 @@ public class MyAccessibilityService extends AccessibilityService implements Acce
         }
     }
 
-    public  Rect getPosition(AccessibilityNodeInfo rootNode) {
+    public  Rect myGetBoundsInScreen(AccessibilityNodeInfo node) {
         Rect boundsInScreen = null;
-        if (rootNode != null) {
+        if (node != null) {
             // 获取节点在屏幕中的位置
             boundsInScreen = new Rect();
-            rootNode.getBoundsInScreen(boundsInScreen);
+            node.getBoundsInScreen(boundsInScreen);
 
             int left = boundsInScreen.left;
             int top = boundsInScreen.top;
             int right = boundsInScreen.right;
             int bottom = boundsInScreen.bottom;
-            Log.d(TAG,"Left"+left+"Top"+top+"Right"+right+"Bottom"+bottom);
+            Log.d(TAG,"Left:"+left+" Top:"+top+" Right:"+right+" Bottom:"+bottom);
+            Log.d(TAG,node.toString());
         }
         return boundsInScreen;
     }
@@ -175,5 +205,20 @@ public class MyAccessibilityService extends AccessibilityService implements Acce
         AccessibilityServiceInterface.super.sendAccessibilityEvent(event);
     }
 
+    //TODO 动态配置，未使用
+
+    private void setAccessibilityNodeInfos(){
+        AccessibilityServiceInfo serviceInfo = new AccessibilityServiceInfo();
+//        serviceInfo.eventTypes = AccessibilityEvent.TYPE_WINDOWS_CHANGED;
+        serviceInfo.eventTypes = AccessibilityEvent.TYPES_ALL_MASK;
+        serviceInfo.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
+        serviceInfo.flags |= AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS;
+
+        serviceInfo.flags |= AccessibilityServiceInfo.FLAG_REQUEST_TOUCH_EXPLORATION_MODE;
+
+        serviceInfo.flags |= AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
+
+        setServiceInfo(serviceInfo);
+    }
 
 }

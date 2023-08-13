@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="float_bar_back">#80FFFFFF</color>
+
     <color name="alpha_gray">#7FDCD9D9</color>
     <color name="alpha_blue">#8ABCD3</color>
 

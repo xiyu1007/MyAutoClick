@@ -9,15 +9,19 @@ import androidx.core.content.ContextCompat;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.InputDevice;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -42,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     private final String PACKAGE_NAME = "com.example.yu";
 
-    public static  WindowManager windowManager;
 
     @SuppressLint({"ResourceType", "MissingInflatedId"})
     @Override
@@ -53,12 +56,9 @@ public class MainActivity extends AppCompatActivity {
 
         context = this;
 
-        windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-
-
         MyApplication.context = this;
 
-//        floatingIconManager = new FloatingIconManager(this);
+        floatingIconManager = new FloatingIconManager(this);
 
         // 处理按钮点击事件，用于添加悬浮图标
         Button addButton = findViewById(R.id.add_button);
@@ -94,37 +94,50 @@ public class MainActivity extends AppCompatActivity {
         });
 
         beginButton.setOnClickListener(this::beginClick);
-
     }
 
+    @SuppressLint("RtlHardcoded")
     private void beginClick(View view) {
-        View floatingView = LayoutInflater.from(context).inflate(R.layout.test, null);
-        // 查找TextView并设置其文本
-        WindowManager.LayoutParams params;
-        Button test = floatingView.findViewById(R.id.test);
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 在这里添加代码来添加悬浮图标
-                // 确保在添加悬浮图标之前已经检查了权限
-                MyApplication.pritfLine();
-            }
-        });
-
-        params = new WindowManager.LayoutParams(
+        WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 // 宽度设置为自适应内容
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 // 高度设置为自适应内容
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 // 设置类型为应用程序悬浮窗口
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                // 不获取焦点，避免影响其他操作
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                        | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
                 PixelFormat.TRANSLUCENT
                 // 设置窗口背景为透明
         );
-        windowManager.addView(floatingView,params);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View floatBarView = inflater.inflate(R.layout.float_bar, null);
+        params.gravity = Gravity.CENTER_VERTICAL | Gravity.LEFT;
+        windowManager.addView(floatBarView, params);
 
+        Button begin = floatBarView.findViewById(R.id.begin);
+        begin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                floatingIconManager.updateWindowManagerParams(floatingIconManager.windowManager,floatingIconManager.floatingViews,false);
+
+                Log.d(TAG,"空");
+            }
+        });
+
+    }
+
+    public void onAddButtonClicked(View view) {
+        floatingIconManager.addFloatingIcon();
+
+//        Intent startService = new Intent(context, FloatingIconManager.class);
+//        context.startService(startService);
+
+    }
+    public void onDelButtonClicked(View view) {
+        int id = floatingIconManager.getIdCounter();
+        floatingIconManager.removeLastFloatingIcon(id);
     }
 
     /**
@@ -157,18 +170,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return MyApplication.STATUS_FALSE;
-    }
-
-
-    public void onAddButtonClicked(View view) {
-//        floatingIconManager.addFloatingIcon();
-        Intent startService = new Intent(context, FloatingIconManager.class);
-        context.startService(startService);
-
-    }
-    public void onDelButtonClicked(View view) {
-        int id = floatingIconManager.getIdCounter();
-        floatingIconManager.removeLastFloatingIcon(id);
     }
 
 

@@ -1,25 +1,28 @@
 <!-- res/layout/floating_icon_layout.xml -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/aim_icon"
+    android:id="@+id/aim_frameLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
-    android:contentDescription="@string/aim_description"
+    android:accessibilityHeading="true"
+    android:contentDescription="@string/aim_frameLayout_description"
     >
 
     <ImageView
-        android:id="@+id/floating_icon"
+        android:id="@+id/aim_img"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/aim3"
         android:gravity="center"
-        android:importantForAccessibility="no" />
+        android:accessibilityHeading="true"
+        android:contentDescription="@string/aim_img_description" />
 
     <TextView
-        android:id="@+id/number_text"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:id="@+id/aim_text"
+        android:accessibilityHeading="true"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_gravity="center|center"
         android:background="@drawable/aim_background"
         android:text="@string/icon_id"
@@ -28,6 +31,6 @@
         android:textSize="15sp"
         android:visibility="visible"
         android:gravity="center"
-        android:contentDescription="@string/aim_text" />
+        android:contentDescription="@string/aim_text_description" />
 
 </FrameLayout>

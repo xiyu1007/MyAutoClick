@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
     android:accessibilityEventTypes="typeAllMask"
     android:accessibilityFeedbackType="feedbackGeneric"
-    android:accessibilityFlags="flagDefault"
+    android:accessibilityFlags="flagDefault|flagReportViewIds|flagRequestTouchExplorationMode|flagRequestFilterKeyEvents|flagRetrieveInteractiveWindows"
     android:canRetrieveWindowContent="true"
     android:canPerformGestures="true"
     android:description="@string/description"
@@ -10,7 +9,8 @@
     android:packageNames="" />
 
 
-<!--performAction-->
+
+    <!--performAction-->
 <!--    ACTION_FOCUS // 获取焦点-->
 <!--    ACTION_CLEAR_FOCUS // 清除焦点-->
 <!--    ACTION_SELECT // 选中-->

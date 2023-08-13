@@ -27,29 +27,55 @@ import java.util.List;
 /**
  * @author ASUS
  */
-public class FloatingIconManager extends Service {
+public class FloatingIconManager extends Service{
 
     private static final int MAX_FLOATING_ICONS = 5;
     private Context context;
+    private Handler handler;
     private static int idCounter = 0;
     private final int lofi_data = 10;
     public  WindowManager windowManager;
-    private final List<View> floatingViews = new ArrayList<>();
+    public final List<View> floatingViews = new ArrayList<>();
     private final List<FloatingIcon> floatingIcons = new ArrayList<>();
     private final FeatureSetting featureSetting = new FeatureSetting();
-
-    private final Handler handler = new Handler(Looper.getMainLooper());
     private final String TAG =  "FloatingIconManager";
 
+
+//    public  FloatingIconManager() {
+//    }
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
-    public  FloatingIconManager() {
+    public  FloatingIconManager(Context context) {
+        this.context = context;
+
+        //TODO
+        windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        MyApplication.windowManager = windowManager;
+
+        //延时
+        handler = new Handler(Looper.getMainLooper());
+
+        //TODO 广播接收Feature Setting
+        //广播
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(MyApplication.ACTION_ICON_SETTING_START);
+        filter.addAction(MyApplication.ACTION_FEATURE_SETTING_STOPPED);
+        // 可以继续添加其他动作
+        context.registerReceiver(featureSettingReceiver, filter);
 
     }
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     @Override
     public void onCreate() {
         super.onCreate();
-        context = this;
+
+        //TODO
+//        windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+//        MyApplication.windowManager = windowManager;
+
+
+        //延时
+        handler = new Handler(Looper.getMainLooper());
+
         //TODO 广播接收Feature Setting
         //广播
         IntentFilter filter = new IntentFilter();
@@ -57,11 +83,6 @@ public class FloatingIconManager extends Service {
         filter.addAction(MyApplication.ACTION_FEATURE_SETTING_STOPPED);
         // 可以继续添加其他动作
         this.registerReceiver(featureSettingReceiver, filter);
-
-        windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-//        View floatingView = new View(this);
-
-        addFloatingIcon();
     }
 
     public void addFloatingIcon() {
@@ -71,7 +92,10 @@ public class FloatingIconManager extends Service {
             return;
         }
         idCounter += 1;
-        FloatingIcon floatingIcon = FloatingIconFactory.createFloatingIcon(this);
+
+        //TODO
+        FloatingIcon floatingIcon = FloatingIconFactory.createFloatingIcon(context);
+//        FloatingIcon floatingIcon = FloatingIconFactory.createFloatingIcon(this);
         floatingIcon.setId(idCounter);
         floatingIcon.setNumber();
 
@@ -90,123 +114,126 @@ public class FloatingIconManager extends Service {
 //        LayoutInflater inflater = LayoutInflater.from(this);
 //        View floatingView = inflater.inflate(R.layout.floating_icon_layout, null);
 
+        if (floatingView ==null){
+            Log.d(TAG,"111111111111111111111111");
+            return;
+        }
+        if (windowManager ==null){
+            Log.d(TAG,"2222222222222222222222");
 
+            return;
+        }
+        if (params ==null){
+            Log.d(TAG,"33333333333333333");
+
+            return;
+        }
         windowManager.addView(floatingView, params);
         // 将悬浮图标添加到主 WindowManager
         floatingViews.add(floatingView);
         floatingIcons.add(floatingIcon);
 
         // 设置悬浮图标的拖动功能
-//        floatingView.setOnTouchListener(new View.OnTouchListener() {
-//            private int initialX;
-//            private int initialY;
-//            private float initialTouchX;
-//            private float initialTouchY;
-//            private boolean isMoving = false;
-//
-//            @SuppressLint("ClickableViewAccessibility")
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        // 获取初始位置
-//                        initialX = params.x;
-//                        initialY = params.y;
-//                        initialTouchX = event.getRawX();
-//                        initialTouchY = event.getRawY();
-//                        isMoving = false;
-//                        // 2秒后执行长按操作
-//                        handler.postDelayed(longPressRunnable, 500);
-//                        return true;
-//                    case MotionEvent.ACTION_MOVE:
-//                        // 计算移动距离
-//                        int deltaX = (int) (event.getRawX() - initialTouchX);
-//                        int deltaY = (int) (event.getRawY() - initialTouchY);
-//
-//                        // 更新悬浮图标的位置
-//                        params.x = initialX + deltaX;
-//                        params.y = initialY + deltaY;
-//
-//                        MyApplication.pritfLine();
-//
-//                        // 更新悬浮图标的显示位置
-//
-//
-//                        windowManager.updateViewLayout(floatingView, params);
-//                        floatingIcon.setParams(params);
-//
-//                        Rect rect = new Rect();
-//                        floatingIcon.getView().getGlobalVisibleRect(rect);
-//
-//                        Log.d(TAG,"X:"+floatingIcon.getParams().x+"  Y:"+floatingIcon.getView().getWidth());
-//
-//
-//                        int left = rect.left;
-//                        int top = rect.top;
-//                        int right = rect.right;
-//                        int bottom = rect.bottom;
-//
-//                        Log.d(TAG,"left:"+left+"  right:"+right);
-//                        Log.d(TAG,"top:"+top+"  bottom:"+bottom);
-//
-//                        // 判断是否移动过
-//                        if (Math.abs(deltaX) > lofi_data || Math.abs(deltaY) > lofi_data) {
-//                            isMoving = true;
-//                            handler.removeCallbacks(longPressRunnable); // 取消长按操作
+        floatingView.setOnTouchListener(new View.OnTouchListener() {
+            private int initialX;
+            private int initialY;
+            private float initialTouchX;
+            private float initialTouchY;
+            private boolean isMoving = false;
+
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+//                        updateFloatingViewParams(floatingView);
+                        // 获取初始位置
+                        initialX = params.x;
+                        initialY = params.y;
+                        initialTouchX = event.getRawX();
+                        initialTouchY = event.getRawY();
+                        isMoving = false;
+                        // 2秒后执行长按操作
+                        handler.postDelayed(longPressRunnable, 500);
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        // 计算移动距离
+                        int deltaX = (int) (event.getRawX() - initialTouchX);
+                        int deltaY = (int) (event.getRawY() - initialTouchY);
+
+                        // 更新悬浮图标的位置
+                        params.x = initialX + deltaX;
+                        params.y = initialY + deltaY;
+
+                        MyApplication.pritfLine();
+
+                        // 更新悬浮图标的显示位置
+
+                        windowManager.updateViewLayout(floatingView, params);
+                        floatingIcon.setParams(params);
+
+                        Rect rect = new Rect();
+                        floatingIcon.getView().getGlobalVisibleRect(rect);
+
+                        Log.d(TAG,"X:"+floatingIcon.returnParams().x+"  Y:"+floatingIcon.getView().getWidth());
+
+
+                        int left = rect.left;
+                        int top = rect.top;
+                        int right = rect.right;
+                        int bottom = rect.bottom;
+
+                        Log.d(TAG,"left:"+left+"  right:"+right);
+                        Log.d(TAG,"top:"+top+"  bottom:"+bottom);
+
+                        // 判断是否移动过
+                        if (Math.abs(deltaX) > lofi_data || Math.abs(deltaY) > lofi_data) {
+                            isMoving = true;
+                            handler.removeCallbacks(longPressRunnable); // 取消长按操作
+                        }
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        handler.removeCallbacks(longPressRunnable); // 取消长按操作
+//                        if (!isMoving) {
+//                            // 执行点击操作
+//                            showFeatureSetting(floatingIcon);
 //                        }
-//                        return true;
-//                    case MotionEvent.ACTION_UP:
-//                        handler.removeCallbacks(longPressRunnable); // 取消长按操作
-////                        if (!isMoving) {
-////                            // 执行点击操作
-////                            showFeatureSetting(floatingIcon);
-////                        }
-//                        return true;
-//                    default:
-//                        return false;
-//                }
-//
-//            }
-//
-//            // 长按操作的Runnable
-//            private final Runnable longPressRunnable = new Runnable() {
-//                @Override
-//                public void run() {
-//                    // 长按操作
-//                    showFeatureSetting(floatingIcon);
-//                }
-//            };
-//        });
+                        return true;
+                    default:
+                        return false;
+                }
+
+            }
+
+            // 长按操作的Runnable
+            private final Runnable longPressRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    // 长按操作
+                    showFeatureSetting(floatingIcon);
+                }
+            };
+        });
     }
 
+    public void updateWindowManagerParams(WindowManager windowManager,List<View> floatingViews,boolean IS_TOUCHABLE){
+        for (View floatingView : floatingViews) {
+            // 获取当前视图的 WindowManager.LayoutParams 对象
+            WindowManager.LayoutParams params = (WindowManager.LayoutParams) floatingView.getLayoutParams();
 
-    public WindowManager.LayoutParams setView() {
-        /*
-        FLAG_NOT_FOCUSABLE: 这个标志指示窗口不接收焦点，不会响应用户的输入事件。
-        设置此标志后，窗口上的控件（例如EditText）将无法获取焦点并接收用户输入。
-        FLAG_NOT_TOUCH_MODAL: 这个标志指示窗口在接收触摸事件时，不会将触摸事件传递给后面的窗口。
-        如果未设置此标志，当用户点击窗口之外的区域时，触摸事件会被传递给后面的窗口。
-        FLAG_SPLIT_TOUCH: 这个标志指示窗口支持分割触摸事件，允许多个窗口同时处理触摸事件。
-        FLAG_WATCH_OUTSIDE_TOUCH: 这个标志指示窗口监视在窗口之外的触摸事件
-        */
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                        | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-                        | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
-                PixelFormat.TRANSLUCENT
-        );
-//         |WindowManager.LayoutParams.FLAG_DIM_BEHIND,
+            // 修改需要更新的属性
+            if(IS_TOUCHABLE){
+                params.flags |= WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
 
-
-        params.x = 0;
-        params.y = 0;
-        params.gravity = android.view.Gravity.CENTER;
-        return params;
+            }else {
+                params.flags |= WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
+            }
+            // 更新视图的属性
+            windowManager.updateViewLayout(floatingView, params);
+        }
 
     }
+
 
     public void removeLastFloatingIcon(int id) {
         if (!floatingViews.isEmpty()) {
@@ -233,8 +260,12 @@ public class FloatingIconManager extends Service {
         }
         floatingIcon.dataWatcher.printAttributes(TAG);
         MyApplication.WHICH_ICON = floatingIcon.getId();
-        Intent startService = new Intent(this, FeatureSetting.class);
-        this.startService(startService);
+//        Intent startService = new Intent(this, FeatureSetting.class);
+//        this.startService(startService);
+
+        //TODO
+        Intent startService = new Intent(context, FeatureSetting.class);
+        context.startService(startService);
     }
 
 
@@ -273,11 +304,12 @@ public class FloatingIconManager extends Service {
         unregisterReceiver(featureSettingReceiver);
     }
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+
         return null;
     }
+
 
     public void stopFeatureSettingService() {
         // 停止服务

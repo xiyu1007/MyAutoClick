@@ -57,13 +57,9 @@ public class MyApplication extends Application {
 
     public static int WHICH_ICON = 0;
 
-
-
     private static final String TAG = "MyApplication";
 
-    public void beginClick(View view) {
-
-    }
+    public static  WindowManager windowManager;
 
 
     private Config config;

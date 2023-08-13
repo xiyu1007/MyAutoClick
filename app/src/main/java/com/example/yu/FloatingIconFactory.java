@@ -5,20 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 
 import java.util.List;
 
+/**
+ * @author ASUS
+ */
 public class FloatingIconFactory  extends Service {
 
     public static List<DataWatcher> dataWatcherList = null;
     private static DataWatcher defaultDataWatcher;
     private static final String FILE_NAME = "data/data.ser";
-
-    private static final String CACHE_FILE_NAME = "data_watcher_cache.ser";
-
     private static final String TAG = "FloatingIconFactory";
 
     public static FloatingIcon createFloatingIcon(Context context) {
