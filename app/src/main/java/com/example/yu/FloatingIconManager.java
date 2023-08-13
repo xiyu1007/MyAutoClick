@@ -122,17 +122,17 @@ public class FloatingIconManager extends Service{
         // 设置悬浮图标的拖动功能,如果超过500ms,则触发showFeatureSetting
 
         floatingView.setOnTouchListener(new View.OnTouchListener() {
-            @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        Log.d(TAG, String.valueOf(+floatingIcon.getId())+String.valueOf(floatingView.isClickable()));
                         initialX = params.x;
                         initialY = params.y;
                         initialTouchX = event.getRawX();
                         initialTouchY = event.getRawY();
                         handler.postDelayed(longPressRunnable, 500);
-                        return true;
+                        return false;
                     case MotionEvent.ACTION_MOVE:
                         int deltaX = (int) (event.getRawX() - initialTouchX);
                         int deltaY = (int) (event.getRawY() - initialTouchY);
@@ -149,11 +149,13 @@ public class FloatingIconManager extends Service{
                         return true;
                     case MotionEvent.ACTION_UP:
                         handler.removeCallbacks(longPressRunnable);
-                        floatingView.performClick(); // 触发点击操作
-//                        floatingView.requestFocus(); // 触发聚焦操作
+                        Log.d(TAG,"up");
+                        boolean aa = floatingView.performClick(); // 触发点击操作
+                        Log.d(TAG, String.valueOf(aa));
+
                         return true;
                     default:
-                        return false;
+                        return true;
                 }
             }
 

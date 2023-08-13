@@ -45,8 +45,7 @@ public class FloatingIcon extends Activity {
                 // 高度设置为自适应内容
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 // 设置类型为应用程序悬浮窗口
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                        | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                 PixelFormat.TRANSLUCENT
                 // 设置窗口背景为透明
         );

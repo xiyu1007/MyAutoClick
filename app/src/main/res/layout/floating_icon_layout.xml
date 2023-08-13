@@ -6,6 +6,7 @@
     android:clickable="true"
     android:focusable="true"
     android:accessibilityHeading="true"
+    android:accessibilityPaneTitle="aim_frameLayout"
     android:contentDescription="@string/aim_frameLayout_description"
     >
 
